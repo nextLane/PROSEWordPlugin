@@ -12,22 +12,26 @@
             messageBanner = new fabric.MessageBanner(element);
             messageBanner.hideBanner();
 
-            // If not using Word 2016, use fallback logic.
-            if (!Office.context.requirements.isSetSupported('WordApi', '1.1')) {
-                $("#template-description").text("This sample displays the selected text.");
-                $('#button-text').text("Display!");
-                $('#button-desc').text("Display the selected text");
+            //// If not using Word 2016, use fallback logic.
+            //if (!Office.context.requirements.isSetSupported('WordApi', '1.1')) {
+            //    $("#template-description").text("This sample displays the selected text.");
+            //    $('#button-text').text("Display!");
+            //    $('#button-desc').text("Display the selected text");
                 
-                $('#highlight-button').click(displaySelectedText);
-                return;
-            }
+            //    $('#highlight-button').click(displaySelectedText);
+            //    return;
+            //}
 
-            $("#template-description").text("This sample highlights the longest word in the text you have selected in the document.");
-            $('#button-text').text("Highlight!");
-            $('#button-desc').text("Highlights the longest word.");
-            
+            $("#template-description").text("Learns and generates program from the examples provided below.");
+            $('#button-text').text("Add!");
+			$('#button-desc').text("Adds examples to be learned!");
+			$('#clear-button-text').text("Clear All");
+			$('#clear-button-desc').text("Clears all examples!");
+
+
+			$('#add-button').click(addExample);
             loadSampleData();
-
+			//displaySelectedText();
             // Add a click event handler for the highlight button.
             $('#highlight-button').click(hightlightLongestWord);
         });
@@ -50,7 +54,39 @@
             return context.sync();
         })
         .catch(errorHandler);
-    }
+	}
+
+	function addExample() {
+		Word.run(function (context) {
+			// Queue a command to get the current selection and then
+			// create a proxy range object with the results.
+			var range = context.document.getSelection();
+
+			// This variable will keep the search results for the longest word.
+			var searchResults;
+
+			// Queue a command to load the range selection result.
+			context.load(range, 'text');
+
+			// Synchronize the document state by executing the queued commands
+			// and return a promise to indicate task completion.
+			return context.sync()
+				.then(function () {
+					// Get the longest word from the selection.
+					var words = range.text.split(/\s+/);
+					//var longestWord = words.reduce(function (word1, word2) { return word1.length > word2.length ? word1 : word2; });
+
+					// Queue a search command.
+					//searchResults = range.search(longestWord, { matchCase: true, matchWholeWord: true });
+
+					// Queue a commmand to load the font property of the results.
+					//context.load(searchResults, 'font');
+				})
+				.then(context.sync);
+		})
+			.catch(errorHandler);
+	} 
+
 
     function hightlightLongestWord() {
         Word.run(function (context) {
