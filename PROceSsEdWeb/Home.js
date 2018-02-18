@@ -72,9 +72,9 @@
 			// and return a promise to indicate task completion.
 			return context.sync()
 				.then(function () {
-					// Get the longest word from the selection.
-					var words = range.text.split(/\s+/);
-					//var longestWord = words.reduce(function (word1, word2) { return word1.length > word2.length ? word1 : word2; });
+					$('#examples-text-area').append(range.text.trim());
+					$('#examples-text-area').append("\n*******\n");
+
 
 					// Queue a search command.
 					//searchResults = range.search(longestWord, { matchCase: true, matchWholeWord: true });
