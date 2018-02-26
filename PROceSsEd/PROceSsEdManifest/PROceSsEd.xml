@@ -28,6 +28,7 @@
     <AppDomain>AppDomain1</AppDomain>
     <AppDomain>AppDomain2</AppDomain>
     <AppDomain>AppDomain3</AppDomain>
+    <AppDomain>https://mailantsoutlookplugin.westus.cloudapp.azure.com</AppDomain>
   </AppDomains>
   <!--End Basic Settings. -->
   

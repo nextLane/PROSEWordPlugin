@@ -11,7 +11,7 @@
             var element = document.querySelector('.ms-MessageBanner');
             messageBanner = new fabric.MessageBanner(element);
             messageBanner.hideBanner();
-
+			
             //// If not using Word 2016, use fallback logic.
             //if (!Office.context.requirements.isSetSupported('WordApi', '1.1')) {
             //    $("#template-description").text("This sample displays the selected text.");
@@ -26,10 +26,14 @@
             $('#button-text').text("Add!");
 			$('#button-desc').text("Adds examples to be learned!");
 			$('#clear-button-text').text("Clear All");
-			$('#clear-button-desc').text("Clears all examples!");
+			$('#clear-button-desc').text("Clears all the examples");
+			$('#learn-button-text').text("Learn! Generate program");
+			$('#learn-button-desc').text("Interacts with PROSE to learn based on examples!");
 
 
 			$('#add-button').click(addExample);
+			$('#clear-button').click(clearAllExamples);
+			$('#learn-button').click(sendLearnRequest);
             loadSampleData();
 			//displaySelectedText();
             // Add a click event handler for the highlight button.
@@ -61,32 +65,70 @@
 			// Queue a command to get the current selection and then
 			// create a proxy range object with the results.
 			var range = context.document.getSelection();
-
+			var doc = context.document.body;
 			// This variable will keep the search results for the longest word.
 			var searchResults;
 
 			// Queue a command to load the range selection result.
 			context.load(range, 'text');
+			context.load(doc,'text')
 
 			// Synchronize the document state by executing the queued commands
 			// and return a promise to indicate task completion.
 			return context.sync()
 				.then(function () {
-					$('#examples-text-area').append(range.text.trim());
-					$('#examples-text-area').append("\n*******\n");
-
-
-					// Queue a search command.
-					//searchResults = range.search(longestWord, { matchCase: true, matchWholeWord: true });
-
-					// Queue a commmand to load the font property of the results.
-					//context.load(searchResults, 'font');
+					$('#examples-text-area').append(range.text);
+					$('#examples-text-area').append(doc.text.indexOf
+					(range.text));
+					$('#examples-text-area').append("\n*****\n");
 				})
 				.then(context.sync);
 		})
 			.catch(errorHandler);
 	} 
 
+	function clearAllExamples() {
+		Word.run(function (context) {
+			return context.sync()
+				.then(function () {
+					$('#examples-text-area').empty();
+				})
+				.then(context.sync);
+		})
+			.catch(errorHandler);
+	} 
+
+	function sendLearnRequest() {
+
+
+		var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
+		var prog = "";
+		var xhr = new XMLHttpRequest();
+		xhr.withCredentials = true;
+
+		xhr.addEventListener("readystatechange", function () {
+			if (this.readyState === 4) {
+				prog = this.responseText;
+				$('#examples-text-area').empty();
+				$('#examples-text-area').val(prog);
+				console.log(prog);
+			}
+		});
+
+		xhr.open("POST", "<url>");
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setRequestHeader("cache-control", "no-cache");
+		xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+		xhr.send(data);
+		prog = xhr.response;
+		
+
+		Word.run(function (context) {
+
+			return context.sync();
+		})
+			.catch(errorHandler);
+	} 
 
     function hightlightLongestWord() {
         Word.run(function (context) {
