@@ -29,7 +29,7 @@
 			$('#clear-button-desc').text("Clears all the examples");
 			$('#learn-button-text').text("Learn! Generate program");
 			$('#learn-button-desc').text("Interacts with PROSE to learn based on examples!");
-
+			$('#examples-text-area').empty();
 
 			$('#add-button').click(addExample);
 			$('#clear-button').click(clearAllExamples);
@@ -77,10 +77,10 @@
 			// and return a promise to indicate task completion.
 			return context.sync()
 				.then(function () {
-					$('#examples-text-area').append(range.text);
-					$('#examples-text-area').append(doc.text.indexOf
-					(range.text));
-					$('#examples-text-area').append("\n*****\n");
+					//$('#examples-text-area').append(range.text);
+					var start = doc.text.indexOf(range.text);
+					$('#examples-text-area').append(start + ":"+ (start+ range.text.length));
+					$('#examples-text-area').append("\n");
 				})
 				.then(context.sync);
 		})
@@ -91,36 +91,82 @@
 		Word.run(function (context) {
 			return context.sync()
 				.then(function () {
+
 					$('#examples-text-area').empty();
 				})
 				.then(context.sync);
 		})
 			.catch(errorHandler);
 	} 
+	function createJsonInput() {
+		Word.run(function (context) {
+			var doc = context.document.body;
+			context.load(doc, 'text');
+			return context.sync()
+				.then(function () {
 
+
+					var allText = doc.text;
+					var allInputs = $('#examples-text-area').val().split("\n");
+					//$('#examples-text-area').append(allInputs[0].split(":")[0]);
+					//$('#examples-text-area').append(allInputs[1].split(":")[0]);
+					//$('#examples-text-area').append(allInputs[2].split(":")[0]);
+
+					var jsonObj = {
+						"examples": [
+							{
+								"text": allText,
+								"selections": []
+							}
+						],
+						"type": "Sequence"
+					};
+
+					var tempObj = new Object();
+					for (var i = 0; i < allInputs.length; i++) {
+						if (!allInputs[i] || 0 === allInputs[i].length)
+							continue;
+						var start = "startPos";
+						var end = "endPos";
+						tempObj = new Object();
+						tempObj[start] = allInputs[i].split(":")[0];
+						tempObj[end] = allInputs[i].split(":")[1];
+						jsonObj.examples[0].selections.push(tempObj);
+					}
+
+					$('#examples-text-area').append(JSON.stringify(jsonObj));
+
+				})
+				.then(context.sync);
+		})
+			.catch(errorHandler);
+		
+		
+
+	}
 	function sendLearnRequest() {
 
+		createJsonInput();
+		//var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
+		//var prog = "";
+		//var xhr = new XMLHttpRequest();
+		//xhr.withCredentials = true;
 
-		var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
-		var prog = "";
-		var xhr = new XMLHttpRequest();
-		xhr.withCredentials = true;
+		//xhr.addEventListener("readystatechange", function () {
+		//	if (this.readyState === 4) {
+		//		prog = this.responseText;
+		//		$('#examples-text-area').empty();
+		//		$('#examples-text-area').val(prog);
+		//		console.log(prog);
+		//	}
+		//});
 
-		xhr.addEventListener("readystatechange", function () {
-			if (this.readyState === 4) {
-				prog = this.responseText;
-				$('#examples-text-area').empty();
-				$('#examples-text-area').val(prog);
-				console.log(prog);
-			}
-		});
-
-		xhr.open("POST", "<url>");
-		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("cache-control", "no-cache");
-		xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-		xhr.send(data);
-		prog = xhr.response;
+		//xhr.open("POST", "<url>");
+		//xhr.setRequestHeader("content-type", "application/json");
+		//xhr.setRequestHeader("cache-control", "no-cache");
+		//xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+		//xhr.send(data);
+		//prog = xhr.response;
 		
 
 		Word.run(function (context) {
