@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -136,6 +137,7 @@
     <Content Include="Content\OfficeThemes.css" />
     <Content Include="Scripts\jquery.fabric.js" />
     <Content Include="Scripts\jquery.fabric.min.js" />
+    <Content Include="Scripts\office.js" />
     <Content Include="Scripts\Office\1\access-web-16.00.debug.js" />
     <Content Include="Scripts\Office\1\access-web-16.00.js" />
     <Content Include="Scripts\Office\1\ar-sa\office_strings.debug.js" />
@@ -428,6 +430,8 @@
           <DevelopmentServerPort>59690</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:59690/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:59690/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

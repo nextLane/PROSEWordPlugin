@@ -37,7 +37,7 @@
             loadSampleData();
 			//displaySelectedText();
             // Add a click event handler for the highlight button.
-            $('#highlight-button').click(hightlightLongestWord);
+            //$('#highlight-button').click(hightlightLongestWord);
         });
     };
 
@@ -78,8 +78,10 @@
 			return context.sync()
 				.then(function () {
 					//$('#examples-text-area').append(range.text);
-					var start = doc.text.indexOf(range.text);
-					$('#examples-text-area').append(start + ":"+ (start+ range.text.length));
+					var str = doc.text;
+					var selText = range.text;
+					var start = str.indexOf(selText);
+					$('#examples-text-area').append(start + ":" + (start + selText.length));
 					$('#examples-text-area').append("\n");
 				})
 				.then(context.sync);
@@ -99,6 +101,7 @@
 			.catch(errorHandler);
 	} 
 	function createJsonInput() {
+		var jsonObj;
 		Word.run(function (context) {
 			var doc = context.document.body;
 			context.load(doc, 'text');
@@ -112,7 +115,7 @@
 					//$('#examples-text-area').append(allInputs[1].split(":")[0]);
 					//$('#examples-text-area').append(allInputs[2].split(":")[0]);
 
-					var jsonObj = {
+					jsonObj = {
 						"examples": [
 							{
 								"text": allText,
@@ -121,7 +124,6 @@
 						],
 						"type": "Sequence"
 					};
-
 					var tempObj = new Object();
 					for (var i = 0; i < allInputs.length; i++) {
 						if (!allInputs[i] || 0 === allInputs[i].length)
@@ -141,36 +143,37 @@
 		})
 			.catch(errorHandler);
 		
-		
+		return JSON.stringify(jsonObj);
 
 	}
 	function sendLearnRequest() {
 
-		createJsonInput();
-		//var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
-		//var prog = "";
-		//var xhr = new XMLHttpRequest();
-		//xhr.withCredentials = true;
+		var data = createJsonInput();
+		var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
+		var prog = "";
+		var xhr = new XMLHttpRequest();
+		xhr.withCredentials = true;
 
-		//xhr.addEventListener("readystatechange", function () {
-		//	if (this.readyState === 4) {
-		//		prog = this.responseText;
-		//		$('#examples-text-area').empty();
-		//		$('#examples-text-area').val(prog);
-		//		console.log(prog);
-		//	}
-		//});
+		xhr.addEventListener("readystatechange", function () {
+			if (this.readyState === 4) {
+				prog = this.responseText;
+				$('#examples-text-area').empty();
+				$('#examples-text-area').val(prog);
+				console.log(prog);
+			}
+		});
 
-		//xhr.open("POST", "<url>");
-		//xhr.setRequestHeader("content-type", "application/json");
-		//xhr.setRequestHeader("cache-control", "no-cache");
-		//xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-		//xhr.send(data);
-		//prog = xhr.response;
+		xhr.open("POST", "http://localhost:44319/api/textextract/learn");
+		xhr.setRequestHeader("content-type", "application/json; charset=utf-8");
+		xhr.setRequestHeader("cache-control", "no-cache");
+		xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+		xhr.send(data);
+		prog = xhr.response;
 		
 
 		Word.run(function (context) {
-
+			//$('#examples-text-area').empty();
+			//$('#examples-text-area').append(data);
 			return context.sync();
 		})
 			.catch(errorHandler);
