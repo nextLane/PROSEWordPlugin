@@ -1,7 +1,7 @@
 ﻿
 (function () {
     "use strict";
-
+	var jsonObj;
     var messageBanner;
 
     // The initialize function must be run each time a new page is loaded.
@@ -101,7 +101,7 @@
 			.catch(errorHandler);
 	} 
 	function createJsonInput() {
-		var jsonObj;
+		
 		Word.run(function (context) {
 			var doc = context.document.body;
 			context.load(doc, 'text');
@@ -143,13 +143,13 @@
 		})
 			.catch(errorHandler);
 		
-		return JSON.stringify(jsonObj);
+		//return JSON.stringify(jsonObj);
 
 	}
 	function sendLearnRequest() {
 
-		var data = createJsonInput();
-		var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
+		createJsonInput();
+		//var data = "\r\n{\r\n\t\"trainInput\":\"{\r\n\r\n  \\\"datatype\\\": \\\"local\\\",\r\n\r\n  \\\"data\\\": [\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"John\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-05-31 08:40:55.0\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Name\\\": \\\"Paul\\\",\r\n\r\n      \\\"status\\\": \\\"To Be Processed\\\",\r\n\r\n      \\\"LastUpdatedDate\\\": \\\"2013-06-02 16:03:00.0\\\"\r\n\r\n    }\r\n\r\n  ]\r\n\r\n}\",\r\n\"trainOutput\" :\"[\r\n\r\n    {\r\n\r\n      \\\"John\\\" : \\\"To Be Processed\\\"\r\n\r\n    },\r\n\r\n    {\r\n\r\n      \\\"Paul\\\" : \\\"To Be Processed\\\"\r\n\r\n    }\r\n\r\n  ]\"\r\n}";
 		var prog = "";
 		var xhr = new XMLHttpRequest();
 		xhr.withCredentials = true;
@@ -163,17 +163,18 @@
 			}
 		});
 
-		xhr.open("POST", "http://localhost:44319/api/textextract/learn");
+		xhr.open("POST", "http://localhost:2217/api/textextract/learn");
 		xhr.setRequestHeader("content-type", "application/json; charset=utf-8");
 		xhr.setRequestHeader("cache-control", "no-cache");
 		xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-		xhr.send(data);
+		xhr.send(JSON.stringify(jsonObj));
 		prog = xhr.response;
 		
 
 		Word.run(function (context) {
 			//$('#examples-text-area').empty();
 			//$('#examples-text-area').append(data);
+			$('#examples-text-area').append(xhr.responseType);
 			return context.sync();
 		})
 			.catch(errorHandler);
