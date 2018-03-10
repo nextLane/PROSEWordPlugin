@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROceSsEd", "PROceSsEd\PROc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROceSsEdWeb", "PROceSsEdWeb\PROceSsEdWeb.csproj", "{E474BDC1-469E-4606-A809-4297B3CBD82A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashApi", "FlashApi\Incubations.EnterpriseAnts\FlashApi\FlashApi\FlashApi.csproj", "{10CC8656-6D9E-42C9-AA11-9B461C92DB79}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,14 +35,6 @@ Global
 		{E474BDC1-469E-4606-A809-4297B3CBD82A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E474BDC1-469E-4606-A809-4297B3CBD82A}.Release|x64.ActiveCfg = Release|Any CPU
 		{E474BDC1-469E-4606-A809-4297B3CBD82A}.Release|x64.Build.0 = Release|Any CPU
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Debug|x64.ActiveCfg = Debug|x64
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Debug|x64.Build.0 = Debug|x64
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Release|x64.ActiveCfg = Release|x64
-		{10CC8656-6D9E-42C9-AA11-9B461C92DB79}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
