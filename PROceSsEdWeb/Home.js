@@ -27,29 +27,10 @@
 			$('#clear-button').click(clearAllExamples);
 			$('#learn-button').click(sendLearnRunRequest);
 
-            loadSampleData();
+     
 			
         });
     };
-
-    function loadSampleData() {
-        // Run a batch operation against the Word object model.
-        Word.run(function (context) {
-            // Create a proxy object for the document body.
-            var body = context.document.body;
-
-            // Queue a commmand to clear the contents of the body.
-            body.clear();
-            // Queue a command to insert text into the end of the Word document body.
-            body.insertText(
-                "Someone is Sumit Gulwani\rSomeone is Harry Potter\rSomeone is Aditi Bhatnagar\rSomeone is Karthik Raman\rSomeone is Dumbledore",
-                Word.InsertLocation.end);
-
-            // Synchronize the document state by executing the queued commands, and return a promise to indicate task completion.
-            return context.sync();
-        })
-        .catch(errorHandler);
-	}
 
 	function addExample() {
 		Word.run(function (context) {
